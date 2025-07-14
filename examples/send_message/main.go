@@ -12,14 +12,17 @@ import (
 func main() {
 	// Create client
 	client, err := sdkwa.NewClient(sdkwa.Options{
-		APIHost:          getEnv("SDKWA_API_HOST", "https://api.sdkwa.pro"),
-		IDInstance:       getEnv("SDKWA_ID_INSTANCE", ""),
-		APITokenInstance: getEnv("SDKWA_API_TOKEN", ""),
+		APIHost:            getEnv("SDKWA_API_HOST", "https://api.sdkwa.pro"),
+		IDInstance:         getEnv("SDKWA_ID_INSTANCE", ""),
+		APITokenInstance:   getEnv("SDKWA_API_TOKEN", ""),
+		InsecureSkipVerify: true,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
 
+	// Create a basic context - required for all API calls
+	// For production apps, consider using context.WithTimeout() instead
 	ctx := context.Background()
 
 	// Send a message
