@@ -1,5 +1,10 @@
 # SDKWA API Client Go
 
+[![CI](https://github.com/sdkwa/whatsapp-api-client-go/actions/workflows/ci.yml/badge.svg)](https://github.com/sdkwa/whatsapp-api-client-go/actions/workflows/ci.yml)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/sdkwa/whatsapp-api-client-go)](https://github.com/sdkwa/whatsapp-api-client-go)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sdkwa/whatsapp-api-client-go)](https://goreportcard.com/report/github.com/sdkwa/whatsapp-api-client-go)
+
 A Go client library for the SDKWA API supporting both WhatsApp and Telegram messengers.
 
 ## Features
