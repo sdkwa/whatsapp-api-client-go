@@ -8,21 +8,21 @@ import (
 // Sending methods
 
 // SendMessage sends a text message to either a personal or group chat
-func (c *Client) SendMessage(ctx context.Context, params SendMessageParams) (*SendMessageResponse, error) {
+func (c *Client) SendMessage(ctx context.Context, params SendMessageParams, opts ...*RequestOptions) (*SendMessageResponse, error) {
 	var result SendMessageResponse
-	err := c.request(ctx, "POST", c.basePath+"/sendMessage", params, &result)
+	err := c.request(ctx, "POST", c.basePath+"/sendMessage", params, &result, opts...)
 	return &result, err
 }
 
 // SendContact sends a contact card message to a chat
-func (c *Client) SendContact(ctx context.Context, params SendContactParams) (*SendContactResponse, error) {
+func (c *Client) SendContact(ctx context.Context, params SendContactParams, opts ...*RequestOptions) (*SendContactResponse, error) {
 	var result SendContactResponse
-	err := c.request(ctx, "POST", c.basePath+"/sendContact", params, &result)
+	err := c.request(ctx, "POST", c.basePath+"/sendContact", params, &result, opts...)
 	return &result, err
 }
 
 // SendFileByUpload sends a file by uploading it using form-data
-func (c *Client) SendFileByUpload(ctx context.Context, params SendFileByUploadParams) (*SendFileByUploadResponse, error) {
+func (c *Client) SendFileByUpload(ctx context.Context, params SendFileByUploadParams, opts ...*RequestOptions) (*SendFileByUploadResponse, error) {
 	fields := map[string]string{
 		"chatId": params.ChatID,
 	}
@@ -39,32 +39,32 @@ func (c *Client) SendFileByUpload(ctx context.Context, params SendFileByUploadPa
 	}
 
 	var result SendFileByUploadResponse
-	err := c.multipartRequest(ctx, "POST", c.basePath+"/sendFileByUpload", fields, files, &result)
+	err := c.multipartRequest(ctx, "POST", c.basePath+"/sendFileByUpload", fields, files, &result, opts...)
 	return &result, err
 }
 
 // SendFileByURL sends a file by providing its URL
-func (c *Client) SendFileByURL(ctx context.Context, params SendFileByURLParams) (*SendFileByURLResponse, error) {
+func (c *Client) SendFileByURL(ctx context.Context, params SendFileByURLParams, opts ...*RequestOptions) (*SendFileByURLResponse, error) {
 	var result SendFileByURLResponse
-	err := c.request(ctx, "POST", c.basePath+"/sendFileByUrl", params, &result)
+	err := c.request(ctx, "POST", c.basePath+"/sendFileByUrl", params, &result, opts...)
 	return &result, err
 }
 
 // SendLocation sends a location message to a chat
-func (c *Client) SendLocation(ctx context.Context, params SendLocationParams) (*SendLocationResponse, error) {
+func (c *Client) SendLocation(ctx context.Context, params SendLocationParams, opts ...*RequestOptions) (*SendLocationResponse, error) {
 	var result SendLocationResponse
-	err := c.request(ctx, "POST", c.basePath+"/sendLocation", params, &result)
+	err := c.request(ctx, "POST", c.basePath+"/sendLocation", params, &result, opts...)
 	return &result, err
 }
 
 // UploadFile uploads a file to storage for later sending
-func (c *Client) UploadFile(ctx context.Context, file io.Reader) (*UploadFileResponse, error) {
+func (c *Client) UploadFile(ctx context.Context, file io.Reader, opts ...*RequestOptions) (*UploadFileResponse, error) {
 	files := map[string]io.Reader{
 		"file": file,
 	}
 
 	var result UploadFileResponse
-	err := c.multipartRequest(ctx, "POST", c.basePath+"/uploadFile", nil, files, &result)
+	err := c.multipartRequest(ctx, "POST", c.basePath+"/uploadFile", nil, files, &result, opts...)
 	return &result, err
 }
 

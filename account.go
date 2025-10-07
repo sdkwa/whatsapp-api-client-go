@@ -7,72 +7,72 @@ import (
 // Account methods
 
 // GetSettings retrieves the current account settings
-func (c *Client) GetSettings(ctx context.Context) (map[string]interface{}, error) {
+func (c *Client) GetSettings(ctx context.Context, opts ...*RequestOptions) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	err := c.request(ctx, "GET", c.basePath+"/getSettings", nil, &result)
+	err := c.request(ctx, "GET", c.basePath+"/getSettings", nil, &result, opts...)
 	return result, err
 }
 
 // SetSettings updates the account settings
-func (c *Client) SetSettings(ctx context.Context, settings map[string]interface{}) (*SetSettingsResponse, error) {
+func (c *Client) SetSettings(ctx context.Context, settings map[string]interface{}, opts ...*RequestOptions) (*SetSettingsResponse, error) {
 	var result SetSettingsResponse
-	err := c.request(ctx, "POST", c.basePath+"/setSettings", settings, &result)
+	err := c.request(ctx, "POST", c.basePath+"/setSettings", settings, &result, opts...)
 	return &result, err
 }
 
 // GetStateInstance retrieves the current state of the account instance
-func (c *Client) GetStateInstance(ctx context.Context) (*StateInstanceResponse, error) {
+func (c *Client) GetStateInstance(ctx context.Context, opts ...*RequestOptions) (*StateInstanceResponse, error) {
 	var result StateInstanceResponse
-	err := c.request(ctx, "GET", c.basePath+"/getStateInstance", nil, &result)
+	err := c.request(ctx, "GET", c.basePath+"/getStateInstance", nil, &result, opts...)
 	return &result, err
 }
 
 // GetWarmingPhoneStatus gets the account warming state
-func (c *Client) GetWarmingPhoneStatus(ctx context.Context) (map[string]interface{}, error) {
+func (c *Client) GetWarmingPhoneStatus(ctx context.Context, opts ...*RequestOptions) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	err := c.request(ctx, "GET", c.basePath+"/getWarmingPhoneStatus", nil, &result)
+	err := c.request(ctx, "GET", c.basePath+"/getWarmingPhoneStatus", nil, &result, opts...)
 	return result, err
 }
 
-// Reboot reboots the specified WhatsApp account instance
-func (c *Client) Reboot(ctx context.Context) (*RebootResponse, error) {
+// Reboot reboots the specified account instance
+func (c *Client) Reboot(ctx context.Context, opts ...*RequestOptions) (*RebootResponse, error) {
 	var result RebootResponse
-	err := c.request(ctx, "GET", c.basePath+"/reboot", nil, &result)
+	err := c.request(ctx, "GET", c.basePath+"/reboot", nil, &result, opts...)
 	return &result, err
 }
 
-// Logout logs out the specified WhatsApp account instance
-func (c *Client) Logout(ctx context.Context) (*LogoutResponse, error) {
+// Logout logs out the specified account instance
+func (c *Client) Logout(ctx context.Context, opts ...*RequestOptions) (*LogoutResponse, error) {
 	var result LogoutResponse
-	err := c.request(ctx, "GET", c.basePath+"/logout", nil, &result)
+	err := c.request(ctx, "GET", c.basePath+"/logout", nil, &result, opts...)
 	return &result, err
 }
 
-// GetQR returns a QR code for authorizing your WhatsApp account
-func (c *Client) GetQR(ctx context.Context) (*QRResponse, error) {
+// GetQR returns a QR code for authorizing your account
+func (c *Client) GetQR(ctx context.Context, opts ...*RequestOptions) (*QRResponse, error) {
 	var result QRResponse
-	err := c.request(ctx, "GET", c.basePath+"/qr", nil, &result)
+	err := c.request(ctx, "GET", c.basePath+"/qr", nil, &result, opts...)
 	return &result, err
 }
 
 // GetAuthorizationCode gets authorization code for account authorization
-func (c *Client) GetAuthorizationCode(ctx context.Context, params GetAuthorizationCodeParams) (*GetAuthorizationCodeResponse, error) {
+func (c *Client) GetAuthorizationCode(ctx context.Context, params GetAuthorizationCodeParams, opts ...*RequestOptions) (*GetAuthorizationCodeResponse, error) {
 	var result GetAuthorizationCodeResponse
-	err := c.request(ctx, "POST", c.basePath+"/getAuthorizationCode", params, &result)
+	err := c.request(ctx, "POST", c.basePath+"/getAuthorizationCode", params, &result, opts...)
 	return &result, err
 }
 
 // RequestRegistrationCode requests a phone number registration code via SMS or call
-func (c *Client) RequestRegistrationCode(ctx context.Context, params RequestRegistrationCodeParams) (map[string]interface{}, error) {
+func (c *Client) RequestRegistrationCode(ctx context.Context, params RequestRegistrationCodeParams, opts ...*RequestOptions) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	err := c.request(ctx, "POST", c.basePath+"/requestRegistrationCode", params, &result)
+	err := c.request(ctx, "POST", c.basePath+"/requestRegistrationCode", params, &result, opts...)
 	return result, err
 }
 
 // SendRegistrationCode sends the phone number registration code
-func (c *Client) SendRegistrationCode(ctx context.Context, params SendRegistrationCodeParams) (map[string]interface{}, error) {
+func (c *Client) SendRegistrationCode(ctx context.Context, params SendRegistrationCodeParams, opts ...*RequestOptions) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	err := c.request(ctx, "POST", c.basePath+"/sendRegistrationCode", params, &result)
+	err := c.request(ctx, "POST", c.basePath+"/sendRegistrationCode", params, &result, opts...)
 	return result, err
 }
 

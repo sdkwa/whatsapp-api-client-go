@@ -15,22 +15,39 @@ import (
 	"time"
 )
 
-// Client represents the SDKWA WhatsApp API client
+// Client represents the SDKWA API client
 type Client struct {
 	apiHost          string
 	idInstance       string
 	apiTokenInstance string
+	messengerType    MessengerType
 	userID           string
 	userToken        string
 	basePath         string
 	httpClient       *http.Client
 }
 
+// RequestOptions contains options for individual API requests
+type RequestOptions struct {
+	MessengerType MessengerType // Override messenger type for this request
+}
+
+// MessengerType represents the messenger type
+type MessengerType string
+
+const (
+	// MessengerWhatsApp represents WhatsApp messenger
+	MessengerWhatsApp MessengerType = "whatsapp"
+	// MessengerTelegram represents Telegram messenger
+	MessengerTelegram MessengerType = "telegram"
+)
+
 // Options contains configuration options for the SDKWA client
 type Options struct {
 	APIHost            string        // API host URL, defaults to https://api.sdkwa.pro
 	IDInstance         string        // Instance ID (required)
 	APITokenInstance   string        // API token instance (required)
+	MessengerType      MessengerType // Messenger type, defaults to whatsapp
 	UserID             string        // User ID (optional, required for instance management)
 	UserToken          string        // User token (optional, required for instance management)
 	Timeout            time.Duration // HTTP client timeout, defaults to 30 seconds
@@ -51,6 +68,9 @@ func NewClient(opts Options) (*Client, error) {
 	if opts.APIHost == "" {
 		opts.APIHost = "https://api.sdkwa.pro"
 	}
+	if opts.MessengerType == "" {
+		opts.MessengerType = MessengerWhatsApp
+	}
 	if opts.Timeout == 0 {
 		opts.Timeout = 30 * time.Second
 	}
@@ -69,9 +89,10 @@ func NewClient(opts Options) (*Client, error) {
 		apiHost:          opts.APIHost,
 		idInstance:       opts.IDInstance,
 		apiTokenInstance: opts.APITokenInstance,
+		messengerType:    opts.MessengerType,
 		userID:           opts.UserID,
 		userToken:        opts.UserToken,
-		basePath:         fmt.Sprintf("/whatsapp/%s", opts.IDInstance),
+		basePath:         fmt.Sprintf("/%s/%s", opts.MessengerType, opts.IDInstance),
 		httpClient: &http.Client{
 			Timeout:   opts.Timeout,
 			Transport: transport,
@@ -94,7 +115,7 @@ func (e *ErrorResponse) Error() string {
 }
 
 // request makes an HTTP request to the API
-func (c *Client) request(ctx context.Context, method, path string, body interface{}, result interface{}) error {
+func (c *Client) request(ctx context.Context, method, path string, body interface{}, result interface{}, opts ...*RequestOptions) error {
 	var bodyReader io.Reader
 	contentType := "application/json"
 
@@ -111,7 +132,15 @@ func (c *Client) request(ctx context.Context, method, path string, body interfac
 		}
 	}
 
-	fullURL := c.apiHost + path
+	// Apply messenger type override if provided
+	finalPath := path
+	if len(opts) > 0 && opts[0] != nil && opts[0].MessengerType != "" {
+		// Replace messenger type in path
+		overrideBasePath := fmt.Sprintf("/%s/%s", opts[0].MessengerType, c.idInstance)
+		finalPath = strings.Replace(path, c.basePath, overrideBasePath, 1)
+	}
+
+	fullURL := c.apiHost + finalPath
 	req, err := http.NewRequestWithContext(ctx, method, fullURL, bodyReader)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
@@ -152,7 +181,7 @@ func (c *Client) request(ctx context.Context, method, path string, body interfac
 }
 
 // multipartRequest makes a multipart form request to the API
-func (c *Client) multipartRequest(ctx context.Context, method, path string, fields map[string]string, files map[string]io.Reader, result interface{}) error {
+func (c *Client) multipartRequest(ctx context.Context, method, path string, fields map[string]string, files map[string]io.Reader, result interface{}, opts ...*RequestOptions) error {
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
 
@@ -178,7 +207,15 @@ func (c *Client) multipartRequest(ctx context.Context, method, path string, fiel
 		return fmt.Errorf("failed to close multipart writer: %w", err)
 	}
 
-	fullURL := c.apiHost + path
+	// Apply messenger type override if provided
+	finalPath := path
+	if len(opts) > 0 && opts[0] != nil && opts[0].MessengerType != "" {
+		// Replace messenger type in path
+		overrideBasePath := fmt.Sprintf("/%s/%s", opts[0].MessengerType, c.idInstance)
+		finalPath = strings.Replace(path, c.basePath, overrideBasePath, 1)
+	}
+
+	fullURL := c.apiHost + finalPath
 	req, err := http.NewRequestWithContext(ctx, method, fullURL, &buf)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)

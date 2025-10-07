@@ -1,6 +1,15 @@
-# WhatsApp API Client Go
+# SDKWA API Client Go
 
-A Go client library for the SDKWA WhatsApp HTTP API.
+A Go client library for the SDKWA API supporting both WhatsApp and Telegram messengers.
+
+## Features
+
+- ✅ **Multi-Messenger Support**: WhatsApp and Telegram
+- ✅ **Flexible Configuration**: Set default messenger or override per-request
+- ✅ **Complete API Coverage**: All API methods supported
+- ✅ **Type-Safe**: Fully typed request/response structs
+- ✅ **Context Support**: All methods support context.Context
+- ✅ **Telegram-Specific Methods**: CreateApp, SendConfirmationCode, SignInWithConfirmationCode
 
 ## Installation
 
@@ -22,10 +31,11 @@ import (
 )
 
 func main() {
-	// Create client
+	// Create a WhatsApp client (default)
 	client, err := sdkwa.NewClient(sdkwa.Options{
 		IDInstance:       "your_instance_id",
 		APITokenInstance: "your_api_token",
+		MessengerType:    sdkwa.MessengerWhatsApp, // Optional: defaults to WhatsApp
 	})
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
@@ -33,20 +43,70 @@ func main() {
 
 	ctx := context.Background()
 
-	// Send a message
+	// Send a WhatsApp message
 	response, err := client.SendMessage(ctx, sdkwa.SendMessageParams{
 		ChatID:  "79999999999@c.us",
-		Message: "Hello from Go SDK!",
+		Message: "Hello from WhatsApp!",
 	})
 	if err != nil {
 		log.Fatalf("Failed to send message: %v", err)
 	}
 
 	fmt.Printf("Message sent with ID: %s\n", response.IDMessage)
+
+	// Send a Telegram message (override messenger type)
+	response, err = client.SendMessage(ctx, sdkwa.SendMessageParams{
+		ChatID:  "123456789",
+		Message: "Hello from Telegram!",
+	}, &sdkwa.RequestOptions{
+		MessengerType: sdkwa.MessengerTelegram,
+	})
+	if err != nil {
+		log.Fatalf("Failed to send Telegram message: %v", err)
+	}
+
+	fmt.Printf("Telegram message sent with ID: %s\n", response.IDMessage)
 }
 ```
 
-## Features
+## Supported Messengers
+
+### WhatsApp (Default)
+```go
+client, _ := sdkwa.NewClient(sdkwa.Options{
+    IDInstance:       "your_instance_id",
+    APITokenInstance: "your_api_token",
+    MessengerType:    sdkwa.MessengerWhatsApp, // Default
+})
+```
+
+### Telegram
+```go
+client, _ := sdkwa.NewClient(sdkwa.Options{
+    IDInstance:       "your_instance_id",
+    APITokenInstance: "your_api_token",
+    MessengerType:    sdkwa.MessengerTelegram,
+})
+```
+
+### Per-Request Override
+```go
+// Use Telegram for a specific call, even if client defaults to WhatsApp
+client.SendMessage(ctx, params, &sdkwa.RequestOptions{
+    MessengerType: sdkwa.MessengerTelegram,
+})
+```
+
+📖 **[Full Telegram Documentation](TELEGRAM.md)**
+
+## API Methods
+
+All methods support both WhatsApp and Telegram through default messenger type or per-request override.
+
+### Telegram-Specific Methods
+- `CreateApp` - Create a Telegram application
+- `SendConfirmationCode` - Send authorization confirmation code
+- `SignInWithConfirmationCode` - Sign in with confirmation code
 
 ### Account Management
 - Get/Set account settings
@@ -71,7 +131,7 @@ func main() {
 - Get contacts and chats
 - Set profile picture/name/status
 - Get avatar
-- Check WhatsApp availability
+- Check account availability
 - Mark messages as read
 - Archive/Unarchive chats
 - Delete messages

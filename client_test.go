@@ -66,7 +66,21 @@ func TestClient_DefaultValues(t *testing.T) {
 	assert.Equal(t, "https://api.sdkwa.pro", client.apiHost)
 	assert.Equal(t, "test-instance", client.idInstance)
 	assert.Equal(t, "test-token", client.apiTokenInstance)
+	assert.Equal(t, MessengerWhatsApp, client.messengerType)
 	assert.Equal(t, "/whatsapp/test-instance", client.basePath)
+}
+
+// TestClient_TelegramMessengerType tests Telegram messenger type
+func TestClient_TelegramMessengerType(t *testing.T) {
+	client, err := NewClient(Options{
+		IDInstance:       "test-instance",
+		APITokenInstance: "test-token",
+		MessengerType:    MessengerTelegram,
+	})
+	require.NoError(t, err)
+
+	assert.Equal(t, MessengerTelegram, client.messengerType)
+	assert.Equal(t, "/telegram/test-instance", client.basePath)
 }
 
 // TestClient_CustomAPIHost tests custom API host
